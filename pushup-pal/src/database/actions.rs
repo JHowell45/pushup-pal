@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{NaiveDateTime, Utc};
 use diesel::{dsl::sum, prelude::*};
 use uuid::Uuid;
 
@@ -8,7 +8,7 @@ type DbError = Box<dyn std::error::Error + Send + Sync>;
 
 pub fn get_todays_pushup_total(
     conn: &mut SqliteConnection,
-    start_date: DateTime<Utc>,
+    start_date: NaiveDateTime,
 ) -> Result<i64, DbError> {
     use crate::database::schema::pushup_sessions::dsl::*;
 
@@ -31,7 +31,7 @@ pub fn insert_new_pushup_session(
     let new_pushup_session = PushupSession {
         id: Uuid::new_v4().to_string(),
         amount: total,
-        created_at: Utc::now(),
+        created_at: Utc::now().naive_local(),
     };
 
     diesel::insert_into(pushup_sessions)
