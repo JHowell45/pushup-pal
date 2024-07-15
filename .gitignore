@@ -15,3 +15,8 @@ Cargo.lock
 
 # Mac OS:
 .DS_Store
+
+# Env:
+.Env
+# Dtabase:
+*.sqlite
