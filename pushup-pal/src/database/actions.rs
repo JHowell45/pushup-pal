@@ -6,6 +6,31 @@ use crate::database::models::PushupSession;
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
+pub fn get_pushup_session(
+    conn: &mut SqliteConnection,
+    uuid: Uuid,
+) -> Result<Option<PushupSession>, DbError> {
+    use crate::database::schema::pushup_sessions::dsl::*;
+
+    let pushup_session = pushup_sessions
+        .filter(id.eq(uuid.to_string()))
+        .first::<PushupSession>(conn)
+        .optional()?;
+
+    Ok(pushup_session)
+}
+
+pub fn get_pushup_sessions(
+    conn: &mut SqliteConnection
+) -> Result<Vec<PushupSession>, DbError> {
+    use crate::database::schema::pushup_sessions::dsl::*;
+
+    let sessions = pushup_sessions
+        .load::<PushupSession>(conn)?;
+
+    Ok(sessions)
+}
+
 pub fn get_first_pushup_session(
     conn: &mut SqliteConnection,
 ) -> Result<Option<PushupSession>, DbError> {
