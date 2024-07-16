@@ -20,13 +20,10 @@ pub fn get_pushup_session(
     Ok(pushup_session)
 }
 
-pub fn get_pushup_sessions(
-    conn: &mut SqliteConnection
-) -> Result<Vec<PushupSession>, DbError> {
+pub fn get_pushup_sessions(conn: &mut SqliteConnection) -> Result<Vec<PushupSession>, DbError> {
     use crate::database::schema::pushup_sessions::dsl::*;
 
-    let sessions = pushup_sessions
-        .load::<PushupSession>(conn)?;
+    let sessions = pushup_sessions.load::<PushupSession>(conn)?;
 
     Ok(sessions)
 }
