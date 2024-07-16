@@ -49,7 +49,7 @@ async fn update(path: web::Path<UpdateInfo>, pool: web::Data<DbPool>) -> Result<
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenvy::dotenv().ok();
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug"));
 
     // initialize DB pool outside of `HttpServer::new` so that it is shared across all workers
     let pool = initialize_db_pool();
