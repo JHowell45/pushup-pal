@@ -9,6 +9,9 @@ extern crate diesel;
 mod database;
 mod services;
 
+use crate::services::pushups::pushup_scope;
+
+
 use crate::database::{initialize_db_pool, DbPool};
 
 static IP: &str = "127.0.0.1";
@@ -61,6 +64,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             // add request logger middleware
             .wrap(middleware::Logger::default())
+            .service(web::scope("/pushup").configure(services::pushups::pushup_scope))
             .service(index)
             .service(update)
     })
