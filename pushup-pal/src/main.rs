@@ -9,9 +9,6 @@ extern crate diesel;
 mod database;
 mod services;
 
-use crate::services::pushups::pushup_scope;
-
-
 use crate::database::{initialize_db_pool, DbPool};
 
 static IP: &str = "127.0.0.1";
