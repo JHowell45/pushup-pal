@@ -24,6 +24,10 @@ pub async fn get(pool: web::Data<DbPool>, path: web::Path<GetInfo>) -> Result<im
     })
 }
 
+pub async fn getDaily(pool: web::Data<DbPool>) -> Result<impl Responder> {
+    
+}
+
 pub async fn all(pool: web::Data<DbPool>) -> Result<impl Responder> {
     let pushup_sessions = web::block(move || {
         let mut conn = pool.get()?;
