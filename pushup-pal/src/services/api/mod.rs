@@ -7,6 +7,7 @@ pub fn pushup_scope(cfg: &mut web::ServiceConfig) {
         web::scope("/pushup")
             .route("", web::get().to(pushups::all))
             .route("/", web::get().to(pushups::all))
-            .route("/<session_id>", web::get().to(pushups::get))
+            .route("/{amount}", web::post().to(pushups::post))
+            .route("/<session_id>", web::get().to(pushups::get)),
     );
 }
