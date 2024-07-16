@@ -1,4 +1,4 @@
-use chrono::{NaiveDateTime, Utc};
+use chrono::{NaiveDateTime, NaiveTime, Utc};
 use diesel::{dsl::sum, prelude::*};
 use uuid::Uuid;
 
@@ -49,14 +49,16 @@ pub fn get_latest_pushup_session(
     Ok(latest)
 }
 
-pub fn get_todays_pushup_total(
-    conn: &mut SqliteConnection,
-    start_date: NaiveDateTime,
-) -> Result<i64, DbError> {
+pub fn get_todays_pushup_total(conn: &mut SqliteConnection) -> Result<i64, DbError> {
     use crate::database::schema::pushup_sessions::dsl::*;
 
+    let datetime = NaiveDateTime::new(
+        Utc::now().date_naive(),
+        NaiveTime::from_hms_milli_opt(0, 0, 0, 0).unwrap(),
+    );
+
     let count_query = pushup_sessions
-        .filter(created_at.ge(start_date))
+        .filter(created_at.ge(datetime))
         .select(sum(amount))
         .get_result::<Option<i64>>(conn)?;
     Ok(match count_query {
