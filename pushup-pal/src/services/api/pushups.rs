@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use actix_web::{error, web, HttpResponse, Responder, Result};
 use serde::Deserialize;
 use uuid::Uuid;
@@ -22,6 +24,18 @@ pub async fn get(pool: web::Data<DbPool>, path: web::Path<GetInfo>) -> Result<im
         Some(session) => HttpResponse::Ok().json(session),
         None => HttpResponse::NotFound().body(""),
     })
+}
+
+pub async fn getDaily(pool: web::Data<DbPool>) -> Result<impl Responder> {
+    let count = web::block(move || {
+        let mut conn = pool.get()?;
+
+        crate::database::actions::get_todays_pushup_total(&mut conn)
+    })
+    .await?
+    .map_err(error::ErrorInternalServerError)?;
+
+    Ok(HttpResponse::Ok().json(HashMap::from([("count", count)])))
 }
 
 pub async fn all(pool: web::Data<DbPool>) -> Result<impl Responder> {
