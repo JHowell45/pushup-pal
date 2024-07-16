@@ -24,7 +24,6 @@ pub async fn get(pool: web::Data<DbPool>, path: web::Path<GetInfo>) -> Result<im
     })
 }
 
-
 pub async fn all(pool: web::Data<DbPool>) -> Result<impl Responder> {
     let pushup_sessions = web::block(move || {
         let mut conn = pool.get()?;
@@ -35,4 +34,19 @@ pub async fn all(pool: web::Data<DbPool>) -> Result<impl Responder> {
     .map_err(error::ErrorInternalServerError)?;
 
     Ok(HttpResponse::Ok().json(pushup_sessions))
+}
+
+#[derive(Deserialize)]
+pub struct PostInfo {
+    amount: i32,
+}
+
+pub async fn post(pool: web::Data<DbPool>, path: web::Path<PostInfo>) -> Result<impl Responder> {
+    let created_pushup_session = web::block(move || {
+        let mut conn = pool.get()?;
+        crate::database::actions::insert_new_pushup_session(&mut conn, path.amount)
+    })
+    .await?
+    .map_err(error::ErrorInternalServerError)?;
+    Ok(HttpResponse::Created().json(created_pushup_session))
 }
