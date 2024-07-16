@@ -8,6 +8,7 @@ use serde::Deserialize;
 extern crate diesel;
 
 mod database;
+mod services;
 
 use crate::database::{initialize_db_pool, DbPool};
 
