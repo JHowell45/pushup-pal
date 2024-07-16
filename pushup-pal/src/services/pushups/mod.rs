@@ -1,5 +1,9 @@
-use actix_web::web::ServiceConfig;
+use actix_web::web;
 
 mod routes;
 
-fn pushup_scope(cfg: &mut ServiceConfig) {}
+use routes::get;
+
+pub fn pushup_scope(cfg: &mut web::ServiceConfig) {
+    cfg.route("", web::get().to(get));
+}
