@@ -9,9 +9,6 @@ extern crate diesel;
 mod database;
 mod services;
 
-use crate::services::pushups::pushup_scope;
-
-
 use crate::database::{initialize_db_pool, DbPool};
 
 static IP: &str = "127.0.0.1";
@@ -52,7 +49,7 @@ async fn update(path: web::Path<UpdateInfo>, pool: web::Data<DbPool>) -> Result<
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenvy::dotenv().ok();
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or(std::env::var("LOG_LEVEL").unwrap_or(String::from("info"))));
 
     // initialize DB pool outside of `HttpServer::new` so that it is shared across all workers
     let pool = initialize_db_pool();
@@ -64,7 +61,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             // add request logger middleware
             .wrap(middleware::Logger::default())
-            .service(web::scope("/pushup").configure(services::pushups::pushup_scope))
+            .service(web::scope("/api").configure(services::api::pushup_scope))
             .service(index)
             .service(update)
     })
