@@ -6,6 +6,25 @@ use crate::database::models::PushupSession;
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
+pub fn get_first_pushup_session(conn: &mut SqliteConnection) -> Result<Option<PushupSession>, DbError> {
+    use crate::database::schema::pushup_sessions::dsl::*;
+
+    let latest = pushup_sessions
+        .first::<PushupSession>(conn)
+        .optional()?;
+    Ok(latest)
+}
+
+pub fn get_latest_pushup_session(conn: &mut SqliteConnection) -> Result<Option<PushupSession>, DbError> {
+    use crate::database::schema::pushup_sessions::dsl::*;
+    
+    let latest = pushup_sessions
+        .order_by(created_at.desc())
+        .first::<PushupSession>(conn)
+        .optional()?;
+    Ok(latest)
+}
+
 pub fn get_todays_pushup_total(
     conn: &mut SqliteConnection,
     start_date: NaiveDateTime,
