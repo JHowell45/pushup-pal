@@ -1,6 +1,5 @@
 use actix_web::{error, Result};
 use actix_web::{get, middleware, post, web, App, HttpResponse, HttpServer, Responder};
-use chrono::Utc;
 use database::actions;
 use serde::Deserialize;
 
