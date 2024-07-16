@@ -1,13 +1,14 @@
 use actix_web::{error, Result};
 use actix_web::{get, middleware, post, web, App, HttpResponse, HttpServer, Responder};
+use chrono::Utc;
 use database::actions;
 use serde::Deserialize;
-use chrono::Utc;
 
 #[macro_use]
 extern crate diesel;
 
 mod database;
+mod services;
 
 use crate::database::{initialize_db_pool, DbPool};
 
@@ -16,15 +17,17 @@ static PORT: u16 = 9000;
 
 #[get("/")]
 async fn index(pool: web::Data<DbPool>) -> Result<impl Responder> {
-    let count = web::block(move || {
+    let latest_pushup_session = web::block(move || {
         let mut conn = pool.get()?;
-        actions::get_todays_pushup_total(&mut conn, Utc::now())
+        // actions::get_todays_pushup_total(&mut conn, Utc::now().date_naive())
+        // actions::get_first_pushup_session(&mut conn)
+        actions::get_latest_pushup_session(&mut conn)
     })
     .await?
     // map diesel query errors to a 500 error response
     .map_err(error::ErrorInternalServerError)?;
 
-    Ok(HttpResponse::Ok().body(format!("Current Count: {count}")))
+    Ok(HttpResponse::Ok().json(latest_pushup_session))
 }
 
 #[derive(Deserialize)]
