@@ -1,17 +1,21 @@
-use std::collections::HashMap;
+use actix_web::{error, web, Responder, Result};
 
-use actix_web::{web, Responder, Result};
+use crate::database::DbPool;
 
 use super::renderer::MiniJinjaRenderer;
 
 pub async fn index(
     templ_env: MiniJinjaRenderer,
-    query: web::Query<HashMap<String, String>>,
+    pool: web::Data<DbPool>,
 ) -> Result<impl Responder> {
-    let count = match query.get("count") {
-        Some(c) => 100,
-        None => 0,
-    };
+    let count = web::block(move || {
+        let mut conn = pool.get()?;
+
+        crate::database::actions::get_todays_pushup_total(&mut conn)
+    })
+    .await?
+    .map_err(error::ErrorInternalServerError)?;
+
     templ_env.render(
         "index.html",
         minijinja::context! {
