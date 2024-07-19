@@ -61,10 +61,7 @@ pub fn get_todays_pushup_total(conn: &mut SqliteConnection) -> Result<i64, DbErr
         .filter(created_at.ge(datetime))
         .select(sum(amount))
         .get_result::<Option<i64>>(conn)?;
-    Ok(match count_query {
-        Some(count) => count,
-        None => 0,
-    })
+    Ok(count_query.unwrap_or_default())
 }
 
 pub fn insert_new_pushup_session(
