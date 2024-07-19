@@ -1,6 +1,11 @@
 use std::path::PathBuf;
 
-use actix_web::{get, http::StatusCode, middleware::{self, ErrorHandlers}, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{
+    get,
+    http::StatusCode,
+    middleware::{self, ErrorHandlers},
+    web, App, HttpResponse, HttpServer, Responder,
+};
 use minijinja::path_loader;
 use minijinja_autoreload::AutoReloader;
 
